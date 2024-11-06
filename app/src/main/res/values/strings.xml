@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Nagger</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="nag_timer">Nag Timer</string>
+    <string name="message">Message</string>
+    <string name="start">Start</string>
+</resources>
