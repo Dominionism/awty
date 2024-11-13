@@ -10,7 +10,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+// 4256865518
 class MainActivity : AppCompatActivity() {
     private lateinit var message: EditText
     private lateinit var phoneNumber: EditText
@@ -18,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startStopButton: Button
     private lateinit var alarmManager: AlarmManager
     private var isAlarmSet = false
+    private val permissionCode = 123
 
     @SuppressLint("MissingInflatedId", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +35,10 @@ class MainActivity : AppCompatActivity() {
         startStopButton = findViewById(R.id.start_stop_button)
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), permissionCode)
+        }
 
         startStopButton.setOnClickListener {
             val messageText = message.text.toString()
@@ -67,6 +76,17 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == permissionCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "SMS permission granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "SMS permission denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
