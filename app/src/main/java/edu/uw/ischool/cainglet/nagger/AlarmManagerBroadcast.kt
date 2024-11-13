@@ -7,6 +7,13 @@ import android.widget.Toast
 
 class AlarmManagerBroadcast : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Toast.makeText(context, "(425) 555-1212: Are we there yet?", Toast.LENGTH_SHORT).show()
+        val message = intent.getStringExtra("messageText")
+        val phoneNumber = intent.getStringExtra("phoneNumber")
+
+        if (message != null && phoneNumber != null) {
+            Toast.makeText(context, "$phoneNumber: $message", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Missing data", Toast.LENGTH_SHORT).show()
+        }
     }
 }
