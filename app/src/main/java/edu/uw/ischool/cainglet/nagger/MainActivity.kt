@@ -31,9 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val intent = Intent(this, AlarmManagerBroadcast::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
         startStopButton.setOnClickListener {
             val messageText = message.text.toString()
             val phoneNumberText = phoneNumber.text.toString()
@@ -41,7 +38,14 @@ class MainActivity : AppCompatActivity() {
 
             if (messageText.isNotBlank() && phoneNumberText.isNotBlank() && timeText.isNotBlank()) {
                 val time = timeText.toIntOrNull()
+
                 if (time != null && time > 0) {
+                    val intent = Intent(this, AlarmManagerBroadcast::class.java)
+                    intent.putExtra("phoneNumber", phoneNumberText)
+                    intent.putExtra("messageText", messageText)
+
+                    val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
                     if (isAlarmSet) {
                         alarmManager.cancel(pendingIntent)
                         Toast.makeText(this, "Alarm stopped", Toast.LENGTH_SHORT).show()
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                         alarmManager.setRepeating(
                             AlarmManager.RTC_WAKEUP,
                             System.currentTimeMillis() + (time * 60 * 1000),
-                            ((time * 60 * 1000).toLong()),
+                            (time * 60 * 1000).toLong(),
                             pendingIntent
                         )
                         Toast.makeText(this, "Alarm set to repeat every $time minutes", Toast.LENGTH_SHORT).show()
